@@ -119,8 +119,52 @@ public class Runbat {
 
     private  void do570Edit(Order order, boolean isSingleEdit) {
 
-        if(isSingleEdit){
+        if(isSingleEdit) {
+            String tempOrder = null;
+            StringBuilder result = null;
+            Runtime runtime = Runtime.getRuntime(); //Runtime.getRuntime()返回当前应用程序的Runtime对象
+            Process process = null;  //Process可以控制该子进程的执行或获取该子进程的信息。
+            if (isSingleEdit) {
+                try {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("snmpset -v 2c -c private");
+                    stringBuilder.append(" ");
+                    stringBuilder.append(order.getIp());
+                    stringBuilder.append(" ");
+                    stringBuilder.append(order.getMachine_port());
+                    stringBuilder.append(" ");
+                    stringBuilder.append(order.getType());
+                    stringBuilder.append(" ");
+                    stringBuilder.append(order.getValue());
 
+                    tempOrder = stringBuilder.toString();
+                    String[] cmdString = new String[3];
+                    cmdString[0] = "/bin/sh";
+                    cmdString[1] = "-c";
+                    cmdString[2] = tempOrder;
+
+                    System.out.println(tempOrder);
+                    System.out.println(cmdString);
+
+                    process = runtime.exec(cmdString);
+
+                    process.waitFor();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                int i = process.exitValue();  //接收执行完毕的返回值ss
+                if (i == 0) {
+//        	System.out.println(stringBuffer);
+                    System.out.println("执行完成.");
+                } else {
+                    System.out.println("执行失败.");
+                }
+
+                process.destroy();
+                process = null;
+            }
         }
     }
 
